@@ -1,9 +1,138 @@
-﻿
-#include <iostream>
+﻿#include <iostream>
 #include <vector>
 #include <string>
 
 using namespace std;
+
+struct ab
+{
+	bool a;
+	bool b;
+};
+
+vector <bool> generation();
+ab func(string, vector <bool>, int, int);
+void bl(vector <vector <bool>>, vector <bool>);
+
+int main()
+{
+	int cntr = 0;
+	vector <vector <bool>> bk;
+	for (int eachWord = 0; eachWord < 40; eachWord++)
+	{
+		vector <bool> bf = generation();
+		bk.push_back(bf);
+		cout << "[" << eachWord << "] ";
+		for (int eachLetter = 0; eachLetter < bf.size(); eachLetter++)
+		{
+			cout << bf[eachLetter];
+
+		}
+		cout << endl;
+	}
+	cout << endl;
+
+	setlocale(LC_ALL, "rus");
+	int valua;
+	cout << "Введите номер: ";
+	cin >> valua;
+	bl(bk, bk[valua]);
+
+	system("pause");
+	return 0;
+}
+
+vector <bool> generation()
+{
+	vector <bool> valua;
+	for (int eachLetter = 0; eachLetter < 10; eachLetter++)
+	{
+		valua.push_back(std::rand() % 2 == 1);
+	}
+	return valua;
+}
+ab func(string arg, vector <bool> w, int i, int m) {
+	ab tmp;
+	if (i + 1 == w.size() - m) {
+		tmp.a = false;
+		tmp.b = false;
+	}
+	else {
+		ab tmp1 = func(arg, w, i + 1, m);
+		if (tmp1.a || (arg[i] == '0' && w[i] == true && !tmp1.b)) {
+			tmp.a = true;
+		}
+		else {
+			tmp.a = false;
+		}
+		if (tmp1.b || (arg[i] == '1' && w[i] == false && !tmp1.a)) {
+			tmp.b = true;
+		}
+		else {
+			tmp.b = false;
+		}
+	}
+	return tmp;
+};
+
+void bl(vector <vector <bool>> bk, vector <bool> w)
+{
+	setlocale(LC_ALL, "rus");
+	vector<vector<bool>> sv;
+
+	for (int eachWord = 0; eachWord < bk.size(); eachWord++) {
+		std::string tmp = "";
+		for (int eachLetter = 0; eachLetter < bk[eachWord].size(); eachLetter++) {
+			tmp += std::to_string(bk[eachWord][eachLetter]);
+		}
+		if (func(tmp, w, 0, 0).a == false && func(tmp, w, 0, 0).b == true) {
+			sv.push_back(bk[eachWord]);
+		}
+	}
+	string mn = "";
+	for (int eachWord = 0; eachWord < sv.size(); eachWord++) {
+		string tmp = "";
+		for (int eachLetter = 0; eachLetter < sv[eachWord].size(); eachLetter++) {
+			tmp += to_string(sv[eachWord][eachLetter]);
+		}
+		for (int eachWordJ = eachWord + 1; eachWordJ < sv.size(); eachWordJ++) {
+			ab res = func(tmp, sv[eachWordJ], 0, 0);
+			if (res.a == true && res.b == false) {
+				mn = tmp;
+			}
+		}
+	}
+	sv.clear();
+	for (int eachWord = 0; eachWord < bk.size(); eachWord++)
+	{
+		string tmp = "";
+		for (int eachLetter = 0; eachLetter < bk[eachWord].size(); eachLetter++)
+		{
+			tmp += to_string(bk[eachWord][eachLetter]);
+		}
+		ab result = func(tmp, w, 0, 0);
+		if (result.a == false && result.b == true)
+		{
+			sv.push_back(bk[eachWord]);
+		}
+	}
+	std::string mx = "";
+	for (int eachWord = 0; eachWord < sv.size(); eachWord++)
+	{
+		std::string tmp = "";
+		for (int eachLetter = 0; eachLetter < sv[eachWord].size(); eachLetter++)
+			tmp += std::to_string(sv[eachWord][eachLetter]);
+
+		for (int eachWordJ = eachWord + 1; eachWordJ < sv.size(); eachWordJ++)
+		{
+			auto result = func(tmp, sv[eachWordJ], 0, 0);
+			if (result.a == 0 && result.b == 1)
+				mx = tmp;
+		}
+	}
+	std::cout << "Ближайшее сверху: " << mx << std::endl;
+	std::cout << "Ближайшее снизу: " << mn << std::endl;
+}
 
 class asoc_memo
 {
@@ -324,22 +453,3 @@ public:
 		}
 	}
 };
-
-int main()
-{
-	setlocale(LC_ALL, "rus");
-	cout << endl;
-	asoc_memo tb;
-	tb.print_tbl();
-	tb.add_el("1111111111111111");
-	cout << endl;
-	tb.print_tbl();
-	tb.add_el("1010101011010101");
-	cout << endl;
-	tb.print_tbl();
-	tb.ariphmetics();
-	cout << endl;
-	tb.print_tbl();
-	system("pause");
-	return 0;
-}
